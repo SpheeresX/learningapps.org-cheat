@@ -1,34 +1,21 @@
 # learningapps.org-cheat
-Cheats for learningapps.org
+Cheats for learningapps.org (group assignment)
 
-## How it works
-This script will make it look like all answers are correct. It currently does not tell you which ones are right, but I'm planning to implement this if it's possible.
+## What it does
+This script will show you the correct answers (groups) for all questions (cards). It does not automatically assign them.
 
 ## Usage
 **Note: this script only works for apps that use the "Group assignment" template.**
 
-1. Assign the cards to any group
-2. Open the DevTools and go to the Console tab
-3. Change the JavaScript context from `top` to `frame (watch)`
-4. Paste the following code:
+1. Open the DevTools and go to the Console tab
+2. Change the JavaScript context from `top` to `frame (watch)`
+3. Paste the following code:
 
 ```javascript
-// make it look like all cards are correct
-Array.from(document.getElementsByClassName('card')).forEach((c) => {
-	c.classList.remove('correct', 'wrong');
-	c.classList.add('correct');
+allCards.forEach((card) => {
+  var answer = card.cluster.xmlValue.replace('text|', '').replace('||0', '');
+  var question = card.innerHTML.replace('<span unselectable="on" class="resizeText">', '').replace('</span>', '').substring(0, 33) + '...';
+
+  console.log(`Q: ${question} / A: ${answer}`);
 });
-
-// show the "congratulations, you found the correct solution" screen
-if ($("#feedback").length === 0) {
-	var f = AppClient.getParameters("feedback").value;
-	$("#cardsOverlay").append(
-	  '<div id="feedback" '+(f.length < 50 ? 'style="text-align:center"':'')+'>'+AppClient.linkifyText(f)+
-	   '<br><br><div style="text-align:center">'+
-	    '<button style="font-size:120%" onclick="$(\'#feedback\').remove()">OK</button>'+
-	  '</div>');
-}
-
-// not sure if this is needed
-AppClient.setSolved();
 ```
